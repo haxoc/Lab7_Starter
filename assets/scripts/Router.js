@@ -71,14 +71,16 @@ export class Router {
       console.error(`Doesn't exist!`);
       return;
     }
-    let hash = "";
+    let hash = "/Lab7_Starter/";
     if (page != "home") {
-      hash = `#${page}`;
+      hash += `/#${page}`;
     }
 
     if (!statePopped && window.location.hash != hash) {
       history.pushState({ page: page }, "", window.location.origin + hash);
     }
+
+    console.log(window.location.origin);
 
     func();
   }
