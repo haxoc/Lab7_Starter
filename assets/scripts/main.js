@@ -26,8 +26,12 @@ const router = new Router(function () {
    * If you did this right, you should see just 1 recipe card rendered to the screen
    */
 
-  document.querySelector("section.section--recipe-cards").classList.add("shown");
-  document.querySelector("section.section--recipe-expand").classList.remove("shown");
+  document
+    .querySelector("section.section--recipe-cards")
+    .classList.add("shown");
+  document
+    .querySelector("section.section--recipe-expand")
+    .classList.remove("shown");
 });
 
 window.addEventListener("DOMContentLoaded", init);
@@ -47,7 +51,6 @@ async function init() {
   bindShowMore();
   bindEscKey();
   bindPopstate();
-  console.log(router);
 }
 
 /**
@@ -55,10 +58,19 @@ async function init() {
  * of installing it and getting it running
  */
 function initializeServiceWorker() {
-  /**
-   *  TODO - Part 2 Step 1
-   *  Initialize the service worker set up in sw.js
-   */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").then(
+        (registration) =>
+          // Registration was successful
+          console.log(
+            "ServiceWorker registration successful with scope: ",
+            registration.scope
+          ),
+        (err) => console.log("ServiceWorker registration failed: ", err)
+      );
+    });
+  }
 }
 
 /**
@@ -74,7 +86,6 @@ async function fetchRecipes() {
         .then((data) => {
           // This grabs the page name from the URL in the array above
           data["page-name"] = recipe.split("/").pop().split(".")[0];
-          console.log(data["page-name"]);
           recipeData[recipe] = data;
           if (Object.keys(recipeData).length == recipes.length) {
             resolve();
@@ -114,8 +125,6 @@ function createRecipeCards() {
       document.querySelector(".section--recipe-expand").classList.add("shown");
       document.querySelector("recipe-expand").data = recipeData[recipe];
     });
-    console.log(page);
-    console.log(router[page]);
     bindRecipeCard(recipeCard, page);
     if (i > 2) {
       recipeCard.classList.add("hidden");
@@ -190,7 +199,7 @@ function bindEscKey() {
    * if the escape key is pressed, use your router to navigate() to the 'home'
    * page. This will let us go back to the home page from the detailed page.
    */
-  document.addEventListener('keydown', (ev) => {
+  document.addEventListener("keydown", (ev) => {
     if (ev.code == "Escape") {
       router.navigate("home", false);
     }
@@ -216,13 +225,13 @@ function bindPopstate() {
    * so your navigate() function does not add your going back action to the history,
    * creating an infinite loop
    */
-  window.addEventListener('popstate', (e) => {
+  window.addEventListener("popstate", (e) => {
     console.log(e);
-    if(e.state) {
+    if (e.state) {
       router.navigate(e.state.page, true);
     } else {
       console.log("HOME");
       router.navigate("home", true);
     }
-  })
+  });
 }
