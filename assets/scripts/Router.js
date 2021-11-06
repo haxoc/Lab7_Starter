@@ -1,15 +1,15 @@
 // router.js
 
 /** Some hints for this router:
-  *   - the functions being passed in should mostly be stored so that
-  *     you can call them later when you want to navigate to a page
-  *   - you should be pushing to history (only when the 'popstate' event
-  *     hasn't fired) so that you can use forward / backward buttons
-  *   - You should be using hashes to update the URL (e.g. 
-  *     https://somewebsite.com#somePage) - the hash is the #somePage part.
-  *     It's accessible via window.location.hash and using them lets you
-  *     easily modify the URL without refreshing the page or anything
-  */
+ *   - the functions being passed in should mostly be stored so that
+ *     you can call them later when you want to navigate to a page
+ *   - you should be pushing to history (only when the 'popstate' event
+ *     hasn't fired) so that you can use forward / backward buttons
+ *   - You should be using hashes to update the URL (e.g.
+ *     https://somewebsite.com#somePage) - the hash is the #somePage part.
+ *     It's accessible via window.location.hash and using them lets you
+ *     easily modify the URL without refreshing the page or anything
+ */
 
 export class Router {
   static routes = {};
@@ -21,7 +21,7 @@ export class Router {
    *                            visually
    */
   constructor(homeFunc) {
-    this['home'] = homeFunc;
+    this["home"] = homeFunc;
   }
 
   /**
@@ -38,6 +38,7 @@ export class Router {
      * router instance using the 'this' keyword. Substitute 'home' for the variable
      * page
      */
+    this[page] = pageFunc;
   }
 
   /**
@@ -51,11 +52,11 @@ export class Router {
     console.log(`navigate() function called, requested page: ${page}`);
     /**
      * TODO - Part 1 - Step 4
-     * Now, we are going to call the functions that we stored earlier based on 
+     * Now, we are going to call the functions that we stored earlier based on
      * what page is being requested. For this function:
-     * 
+     *
      *  1. First, check to see if the function exists, if it doesn't log an error
-     *     and return out of the function. 'this' is a global variable, so you can 
+     *     and return out of the function. 'this' is a global variable, so you can
      *     check to see if it exists nearly the same way you assigned it
      *  2. Create a variable called hash. If page == 'home' set hash to be an empty
      *     string, if page is anything else set it to be the string '#' + page, e.g.
@@ -65,5 +66,20 @@ export class Router {
      *     and URL + hash to history
      *  4. Finally, call the stored function for the given page
      */
+    let func = this[page];
+    if (!func) {
+      console.error(`Doesn't exist!`);
+      return;
+    }
+    let hash = "";
+    if (page != "home") {
+      hash = `#${page}`;
+    }
+
+    if (!statePopped && window.location.hash != hash) {
+      history.pushState({ page: page }, "", window.location.origin + hash);
+    }
+
+    func();
   }
 }
